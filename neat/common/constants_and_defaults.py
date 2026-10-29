@@ -35,15 +35,14 @@ ADAPTER_PRESETS = frozendict({
 })
 
 BARCODE_PRESETS = frozendict({
-    'forward': ('ATTACTCG'), #701
-    'reverse': ('TATAGCCT'), #501
+    'forward': ('TAAGGCGA'), #N701
+    'reverse': ('TAGATCGC'), #S501
 })
 
 FLOWCELLBINDING_PRESETS = frozendict({
-    'P5': ('ATCTCGTATGCCGTCTTCTGCTTG'),
-    'P7': ('GTGTAGATCTCGGTGGTCGCCGTATCATT'),
+    'P5': ('GTGTAGATCTCGGTGGTCGCCGTATCATT'),
+    'P7': ('ATCTCGTATGCCGTCTTCTGCTTG'),
 })
-
 
 
 def resolve_iupac_bases(sequence: str, rng) -> tuple[str, int]:

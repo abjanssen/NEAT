@@ -504,10 +504,8 @@ class Options(SimpleNamespace):
             # so the resolved pair can never be a mix of the two sources.
             self.adapter_r1_ori, self.adapter_r2_ori = ADAPTER_PRESETS[self.adapter_preset]
 
-        self.adapter_r1 = self.adapter_r1_ori + BARCODE_PRESETS['forward'] + FLOWCELLBINDING_PRESETS['P7']
-        self.adapter_r2 = self.adapter_r2_ori + BARCODE_PRESETS['reverse'] + FLOWCELLBINDING_PRESETS['P5']
-        self.adapter_r1 = self.adapter_r1 + "G" * (self.read_len - len(self.adapter_r1))
-        self.adapter_r2 = self.adapter_r2 + "G" * (self.read_len - len(self.adapter_r2))
+        self.adapter_r1 = (self.adapter_r1_ori + BARCODE_PRESETS['forward'] + FLOWCELLBINDING_PRESETS['P7']).ljust(self.read_len, "G")
+        self.adapter_r2 = (self.adapter_r2_ori + BARCODE_PRESETS['reverse'] + FLOWCELLBINDING_PRESETS['P5']).ljust(self.read_len, "G")
         # Readthrough is only visible on inserts shorter than the read, so it needs them kept.
         self.keep_short_fragments = True
 
