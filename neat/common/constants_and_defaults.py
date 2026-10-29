@@ -35,8 +35,8 @@ ADAPTER_PRESETS = frozendict({
 })
 
 BARCODE_PRESETS = frozendict({
-    'forward': ('TAAGGCGA'), #N701
-    'reverse': ('TAGATCGC'), #S501
+    'forward': ('TAAGGCGA'),
+    'reverse': ('TAGATCGC'),
 })
 
 FLOWCELLBINDING_PRESETS = frozendict({

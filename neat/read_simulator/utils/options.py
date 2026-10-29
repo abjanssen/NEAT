@@ -456,7 +456,7 @@ class Options(SimpleNamespace):
     def resolve_adapters(self):
         """
         Validate the adapter options and expand `adapter_preset` into concrete sequences,
-        including mock barcodesa and flowcell-binding portions. Sequences are appended
+        including mock barcodes and flowcell-binding portions. Sequences are appended
         with Gs to simulate readthrough past fragment length.
 
         Readthrough only happens for inserts shorter than the read length, so enabling it
