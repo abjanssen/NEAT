@@ -33,7 +33,7 @@ from pathlib import Path
 from numpy.random import Generator
 from math import inf
 
-from ...common import validate_input_path, validate_output_path, ADAPTER_PRESETS, ALLOWED_NUCL
+from ...common import validate_input_path, validate_output_path, ADAPTER_PRESETS, BARCODE_PRESETS, FLOWCELLBINDING_PRESETS, ALLOWED_NUCL
 
 
 _LOG = logging.getLogger(__name__)
@@ -455,7 +455,9 @@ class Options(SimpleNamespace):
 
     def resolve_adapters(self):
         """
-        Validate the adapter options and expand `adapter_preset` into concrete sequences.
+        Validate the adapter options and expand `adapter_preset` into concrete sequences,
+        including mock barcodesa and flowcell-binding portions. Sequences are appended
+        with Gs to simulate readthrough past fragment length.
 
         Readthrough only happens for inserts shorter than the read length, so enabling it
         implies keeping short fragments rather than resampling them away. `keep_short_fragments`
@@ -500,8 +502,12 @@ class Options(SimpleNamespace):
         else:
             # A named preset always wins over any adapter_r1/adapter_r2 the user also set,
             # so the resolved pair can never be a mix of the two sources.
-            self.adapter_r1, self.adapter_r2 = ADAPTER_PRESETS[self.adapter_preset]
+            self.adapter_r1_ori, self.adapter_r2_ori = ADAPTER_PRESETS[self.adapter_preset]
 
+        self.adapter_r1 = self.adapter_r1_ori + BARCODE_PRESETS['forward'] + FLOWCELLBINDING_PRESETS['P7']
+        self.adapter_r2 = self.adapter_r2_ori + BARCODE_PRESETS['reverse'] + FLOWCELLBINDING_PRESETS['P5']
+        self.adapter_r1 = self.adapter_r1 + "G" * (self.read_len - len(self.adapter_r1))
+        self.adapter_r2 = self.adapter_r2 + "G" * (self.read_len - len(self.adapter_r2))
         # Readthrough is only visible on inserts shorter than the read, so it needs them kept.
         self.keep_short_fragments = True
 
@@ -633,7 +639,10 @@ class Options(SimpleNamespace):
                       f"literal N at read edges.")
         if self.adapters:
             _LOG.info(f"3' adapter readthrough: enabled, preset '{self.adapter_preset}' "
-                      f"(R1={self.adapter_r1}, R2={self.adapter_r2}).")
+                      f"(R1={self.adapter_r1_ori}, R2={self.adapter_r2_ori}).")
+            _LOG.info(f"Barcodes: forward={BARCODE_PRESETS['forward']}, reverse={BARCODE_PRESETS['reverse']}.")
+            _LOG.info(f"Flowcell binding sequences: P5={FLOWCELLBINDING_PRESETS['P5']}, P7={FLOWCELLBINDING_PRESETS['P7']}.")
+
         elif self.keep_short_fragments:
             _LOG.info("Short inserts: kept as insert-length genomic reads, no adapter padding.")
         _LOG.info(f'RNG seed value for run: {self.rng_seed}')

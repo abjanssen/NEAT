@@ -554,7 +554,7 @@ class Read:
 
         bases = []
         for index, score in enumerate(scores):
-            base = self.adapter_seq[index % len(self.adapter_seq)]
+            base = self.adapter_seq[index]
             # Phred definition, the same quality-derived rate get_sequencing_errors uses to place
             # errors on genomic bases. Computed here rather than read off a model lookup table so
             # this works for every quality model (the Markov one has no such table).
